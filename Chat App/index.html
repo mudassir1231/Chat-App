@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mohammed Mudassir ChatApp</title>
+    <style>
+      body { margin: 0; 
+        padding-bottom: 3rem; }
+        
+
+      #form { background: rgba(0, 0, 0, 0.15); padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3rem; box-sizing: border-box; backdrop-filter: blur(10px); }
+      #input { border: none; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
+      #input:focus { outline: none; }
+      #form button { background: #333; border: none; padding: 0 1rem; margin: 0.25rem; border-radius: 3px; outline: none; color: #fff; }
+
+      .messagesr p11{
+        float: left;
+        clear: both;
+        box-shadow: 2px 4px 3px 0px #00000080;
+        margin: 8px;
+        padding: 8px;
+        margin-left: 30px;
+        border-radius: 10px;
+        border: 0.01px solid #9d9b9b24;}
+
+      .messagesr p1{
+        float: right;
+        clear: both;
+        box-shadow: 2px 4px 3px 0px #00000080;
+        margin: 8px;
+        padding: 8px;
+        margin-right: 30px;
+        border-radius: 10px;
+        border: 0.01px solid #9d9b9b24;
+      }
+      
+      .welcome h3{
+        margin: 10px;
+      }
+      
+    </style>
+  </head>
+  <body>
+
+    <center>  <div id="welcome"></div> </center>
+    <div class="messagesr" id="messagesr"></div>
+
+    <form id="form" action="">
+      <input id="input" autocomplete="off" /><button>Send</button>
+    </form>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+
+      const name =prompt("enter your name");
+        
+
+
+      if(name!='' && name!=null){
+
+        var welcome = document.getElementById('welcome');
+        var item = document.createElement('h3');
+        item.textContent = 'Welcome : ' + name;
+        welcome.appendChild(item);
+
+
+
+      var socket = io();
+
+      socket.emit('newuser',name);
+
+      var messagesr = document.getElementById('messagesr');
+      var form = document.getElementById('form');
+      var input = document.getElementById('input');
+
+
+      form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        if (input.value) {
+          socket.emit('chat message', input.value);
+          
+          var item = document.createElement('p1');
+          item.textContent =input.value;
+          messagesr.appendChild(item);
+
+          window.scrollTo(0, document.body.scrollHeight);
+          input.value = '';
+        }
+      });
+
+    
+      socket.on('chat message', function(data) {
+        
+        var item = document.createElement('p11');
+        item.textContent = data.name + ' : ' + data.msg;
+        messagesr.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+
+      });
+
+
+      socket.on('user joined', function(name1) {
+        
+        var item = document.createElement('p11');
+        item.textContent = name1 + ' joined';
+        messagesr.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+
+      });
+
+
+
+    }
+    else{window.location.reload();}
+      
+    </script>
+  </body>
+</html>
